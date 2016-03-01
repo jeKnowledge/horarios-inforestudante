@@ -18,5 +18,11 @@ class AulaDataSripped:
         self.dia = dia
         self.horaInicio = horaInicio
         self.horaFim = horaFim
+    def sameAs(self, otherAulaDataStripped):
+        result = True
+        s = otherAulaDataStripped
+        if self.aulaId != s.aulaId or self.semestre != s.semestre or self.turmaId != s.turmaId or self.dia != s.dia or self.horaInicio != s.horaInicio or self.horaFim != s.horaFim:
+            result = False
+        return result
     def dataStr(self):
-        return "aulaId: " + str(self.aulaId) + "\nsemestre: " + str(self.semestre) + "\nturmaId: " + str(self.turmaId) + "\ndia: " + str(self.dia) + "\nhoraInicio: " + str(self.horaInicio) + "\nhoraFim: " + str(self.horaFim)
+        return "--START--\naulaId: " + str(self.aulaId) + "\nsemestre: " + str(self.semestre) + "\nturmaId: " + str(self.turmaId) + "\ndia: " + str(self.dia) + "\nhoraInicio: " + str(self.horaInicio) + "\nhoraFim: " + str(self.horaFim) + "\n--END--"

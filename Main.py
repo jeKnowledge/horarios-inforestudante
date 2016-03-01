@@ -9,8 +9,8 @@ classesId = [178771]
 
 # Parse csv into array of stripped data
 dataRawArray = DataParser.csvIntoRawArray(DataParser.openFile("HorariosRaw.csv"))
-dataStrippedArray = DataParser.rawArrayToStrippedArray(dataRawArray) #All classes; cache for performance?
+dataStrippedArray = DataParser.rawArrayToStrippedArray(dataRawArray)
 
 # Create timetable
-possibleClasses = TimetableMaker.possibleClasses(dataStrippedArray, semester, classesId)
-TimetableMaker.splitClasses(possibleClasses)
+possibleClasses = TimetableMaker.possibleClasses(dataStrippedArray, semester, classesId) #All classes for the semester
+TimetableMaker.removeDuplicates(possibleClasses, True)
