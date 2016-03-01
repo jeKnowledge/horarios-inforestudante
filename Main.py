@@ -11,6 +11,10 @@ classesId = [178771]
 dataRawArray = DataParser.csvIntoRawArray(DataParser.openFile("HorariosRaw.csv"))
 dataStrippedArray = DataParser.rawArrayToStrippedArray(dataRawArray)
 
-# Create timetable
+# Get out classes
 possibleClasses = TimetableMaker.possibleClasses(dataStrippedArray, semester, classesId) #All classes for the semester
-TimetableMaker.removeDuplicates(possibleClasses, True)
+noDuplicates = TimetableMaker.removeDuplicates(possibleClasses, True)
+
+#Test
+for aula in noDuplicates:
+    print(aula.dataStr())
