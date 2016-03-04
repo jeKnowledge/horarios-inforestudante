@@ -1,5 +1,5 @@
 import DataParser
-import TimetableMaker
+import ClassFilter
 
 print("started")
 
@@ -11,10 +11,9 @@ classesId = [178771]
 dataRawArray = DataParser.csvIntoRawArray(DataParser.openFile("HorariosRaw.csv"))
 dataStrippedArray = DataParser.rawArrayToStrippedArray(dataRawArray)
 
-# Get out classes
-possibleClasses = TimetableMaker.possibleClasses(dataStrippedArray, semester, classesId) #All classes for the semester
-noDuplicates = TimetableMaker.removeDuplicates(possibleClasses, True)
-
-#Test
-for aula in noDuplicates:
-    print(aula.dataStr())
+#Filter and separate classes
+aulas = {}
+for disciplina in classesId:
+    possibleClasses = ClassFilter.possibleClasses(dataStrippedArray, semester, disciplina) #All classes for the semester
+    noDuplicates = ClassFilter.removeDuplicates(possibleClasses, True)
+    aulas[disciplina] = ClassFilter.groupByType(noDuplicates)

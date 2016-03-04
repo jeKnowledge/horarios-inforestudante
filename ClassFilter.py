@@ -1,14 +1,15 @@
 from Structs import AulaDataSripped
 
-def possibleClasses(dataArray, semestre, classesId):
+#all corresponding classes (i.e., every class))
+def possibleClasses(dataArray, semestre, classId):
     result = []
     for aula in dataArray:
-        if (aula.semestre == semestre or aula.semestre == 0) and aula.aulaId in classesId:
+        if aula.aulaId == classId and (aula.semestre == semestre or aula.semestre == 0):
             result.append(aula)
 
     return result
 
-
+#Create possible classes in week
 def removeDuplicates(classArray, sort = False):
     sortedArray = classArray
 
@@ -56,3 +57,15 @@ def mergeSort(array):
         result.extend(left)
 
     return result
+
+
+def groupByType(noDuplicatesArray):
+    aulas = {}
+    for aula in noDuplicatesArray:
+        if aula.tipo not in aulas:
+            aulas[aula.tipo] = {}
+        if aula.turma in aulas[aula.tipo]:
+            aulas[aula.tipo][aula.turma].append(aula)
+        else:
+            aulas[aula.tipo][aula.turma] = [aula]
+    return aulas
