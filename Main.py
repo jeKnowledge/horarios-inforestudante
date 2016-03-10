@@ -1,5 +1,6 @@
 import DataParser
 import ClassFilter
+import TimetableMaker
 
 print("started")
 
@@ -19,3 +20,4 @@ for disciplina in classesId:
     aulas[disciplina] = ClassFilter.groupByType(noDuplicates)
 
 #Make timetable
+TimetableMaker.possibleCombinations(aulas)
