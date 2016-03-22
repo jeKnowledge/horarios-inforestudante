@@ -1,6 +1,6 @@
 from Structs import AulaDataSripped
 
-#all corresponding classes (i.e., every class))
+# All corresponding classes (i.e., every class))
 def possibleClasses(dataArray, semestre, classId):
     result = []
     for aula in dataArray:
@@ -9,16 +9,19 @@ def possibleClasses(dataArray, semestre, classId):
 
     return result
 
-#Create possible classes in week
+# Create possible classes in week
 def removeDuplicates(classArray, sort = False):
     sortedArray = classArray
 
-    #order by turmaId
+    if len(sortedArray) == 1:
+        return sortedArray
+
+    # Order by turmaId
     if sort:
         sortedArray = mergeSort(classArray)
 
-    #When array is sorted
-    result = []
+    # When array is sorted
+    result = [sortedArray[0]]
     for i in range(1, len(sortedArray)):
         if not sortedArray[i - 1].sameAs(sortedArray[i]):
             result.append(sortedArray[i])
@@ -59,6 +62,7 @@ def mergeSort(array):
     return result
 
 
+# Para cada disciplina
 def groupByType(noDuplicatesArray):
     aulas = {}
     for aula in noDuplicatesArray:

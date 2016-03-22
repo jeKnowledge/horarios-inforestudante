@@ -47,7 +47,7 @@ def rawToStripped(dataRaw):
     if dataRaw.semestre == "Anual":
         semestre = 0
     else:
-        semestre = int(dataRaw.semestre[0])
+        semestre = int(dataRaw.semestre[0]) # 1o caractere (1/2)
 
     aulaCodigo = int(dataRaw.aulaId)
     turmaId = int(dataRaw.turmaId)
