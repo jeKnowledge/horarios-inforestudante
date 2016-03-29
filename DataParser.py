@@ -56,13 +56,14 @@ def rawToStripped(dataRaw):
     horaFim = dmytimeToTime(dataRaw.dataFim)
     turma = dataRaw.turma
     tipo = getClassType(dataRaw.turma)
+    aulaNome = dataRaw.aulaNome
 
-    return AulaDataSripped(aulaCodigo, semestre, turmaId, dia, horaInicio, horaFim, turma, tipo)
+    return AulaDataSripped(aulaCodigo, semestre, turmaId, dia, horaInicio, horaFim, turma, tipo, aulaNome)
 
-# "10-JAN-2015 20:30:12" -> 203012
+# "10-JAN-2015 20:30:30" -> 20.55 (date to decimal time)
 def dmytimeToTime(timeString):
-    timeStr = re.search("\d\d:\d\d:\d\d", timeString).group(0).replace(":", "")
-    return int(timeStr)
+    timeStr = re.search("\d\d:\d\d:\d\d", timeString).group(0)
+    return int(timeStr[:2]) + int(timeStr[3:5])/60 + int(timeStr[6:8]) / 3600
 
 
 # Monday -> 0
@@ -122,5 +123,8 @@ def getClasses(strippedArray, semester, classIdArray):
         myClasses.append(data)
     return myClasses
 
+# Returns class "type" from turma
+# i.e., TP1 => TP
+#       O/S/T5 => O/S/T
 def getClassType(turma):
     return re.search(".+(?=\d)", turma).group(0)

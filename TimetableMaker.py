@@ -1,6 +1,6 @@
 from itertools import combinations
 
-#Takes in dictionary of structure:
+# Recebe dicionario de aulas de estrutura:
 # { CLASS_ID:{
 #       T:{
 #           CLASS_T1,
@@ -13,9 +13,9 @@ from itertools import combinations
 #   }, ...
 # }
 
-# Returns array of all possible class combinations
-# Refers to elements in dictionary as tuples; (key, subKey, subSubKey)
-# Make it work first, optimize later.
+# Devolve array de todas as combinacoes de turmas possiveis
+# Refere-se aos elementos no dicionario por tuples: (aula, tipo, turma)
+# IGNORA SOBREPOSICOES
 def possibleCombinations(dictionary):
     # Combinacoes de turmas validos (todos os tipos presentes)
     # Para cada aula, i.e., e necessario fazer combinacao de turmas
@@ -66,3 +66,139 @@ def possibleCombinations(dictionary):
             combAulasValidas.append(comb)   # Se esta combinacao de turmas possuir todas as aulas, e valida
 
     return combAulasValidas
+
+
+
+# Recebe input:
+    # Dicionario:
+    # { CLASS_ID:{
+    #       T:{
+    #           [T1_obj, T1_obj, T1_obj,...],
+    #           CLASS_T...
+    #       },
+    #       TP:{
+    #           CLASS_TP...
+    #       },
+    #       ...
+    #   }, ...
+
+    # Combinacoes validas de aulas:
+    # ( ( ((aula1, tipo1, turma1), (aula1, tipo2, turma1)), ((aula2, tipo1, turma1), (aula2, tipo2, turma1)) ), ... )
+
+# Verifica se ha sobreposicao de aulas e se houver, remove-as
+# Devolve lista de combinacoes sem sobreposicoes
+def removeOverlaps(dictionary, validCombinations):
+    noOverlaps = []
+
+    for comb in validCombinations:
+        horasOcupadas = [] # Horas com "coordenadas", sob a forma (horaInicio, horaFim, (aula, tipo, turma))
+
+        # Criar tuples de horas e colocar na array
+        for aulaComb in comb:
+            for turma in aulaComb:
+                aulaObjList = dictionary[turma[0]][turma[1]][turma[2]] # Tirar objetos Aula do dicionario (multiplos!)
+
+                for aulaObj in aulaObjList:
+                    # Criar tuple com horas inicio/fim e "coordenadas"
+                    hora = (aulaObj.horaInicio, aulaObj.horaFim, (turma[0], turma[1], turma[2]))
+
+        # Verificar sobreposicao em cada par
+        pares = combinations(horasOcupadas, 2)
+        sobreposicoes = []
+        for par in pares:
+            a = par[0]
+            b = par[1]
+
+            cedo = min(a[0], b[0])
+            tarde = max(a[1], b[1])
+            delta = tarde - cedo
+
+            if a[1]-a[0]+b[1]-b[0] > delta:
+                sobreposicoes.append((a[2], b[2]))
+
+        if len(sobreposicoes) > 0:
+            continue
+
+        # Nenhuma sobreposicao encontrada
+        noOverlaps.append(comb)
+
+    return noOverlaps
+
+
+from openpyxl import Workbook
+from openpyxl.styles import Color, PatternFill, Style, Fill, Font
+from random import randint
+
+# Recebe input:
+    # Dicionario:
+    # { CLASS_ID:{
+    #       T:{
+    #           [T1_obj, T1_obj, T1_obj,...],
+    #           CLASS_T...
+    #       },
+    #       TP:{
+    #           CLASS_TP...
+    #       },
+    #       ...
+    #   }, ...
+
+    # Combinacoes de aulas:
+    # ( ( ((aula1, tipo1, turma1), (aula1, tipo2, turma1)), ((aula2, tipo1, turma1), (aula2, tipo2, turma1)) ), ... )
+# Grava um ficheiro xlsm (output.xlsm)
+def outputExcel(dictionary, combinations):
+    wb = Workbook()
+    wb.remove_sheet(wb.active) # Apagar folha default
+
+    combinationNumber = 0
+    for comb in combinations:
+        ws = wb.create_sheet(str(combinationNumber))    # Criar uma nova folha com um id para referencia
+
+        # Labels de dia
+        ws['B1'] = "Segunda"
+        ws['C1'] = "Terça"
+        ws['D1'] = "Quarta"
+        ws['E1'] = "Quinta"
+        ws['F1'] = "Sexta"
+        ws['G1'] = "Sabado"
+        ws['H1'] = "Domingo"
+
+        # Labels de hora (30/30 minutos, das 8 as 22)
+        i = 2
+        for n in range(80,220,5):
+            ws['A'+str(i)] = str(int(n/10)) + "h" + str(int(((n/10)%1)*60)) + "m"
+            i += 1
+
+        # Desenhar aulas
+        for disciplina in comb:
+            for coord in disciplina:
+                aulaObjList = dictionary[coord[0]][coord[1]][coord[2]]
+                for aulaObj in aulaObjList:
+                    ws[diaParaLetra(aulaObj.dia)+horaParaNumero(aulaObj.horaInicio)] = aulaObj.aulaNome + "--Inicio"
+                    ws[diaParaLetra(aulaObj.dia)+horaParaNumero(aulaObj.horaFim)] = aulaObj.aulaNome + "--Fim"
+
+        combinationNumber += 1  # Para referencia
+
+    wb.save('output.xlsx')
+
+
+# ______ Helper functions para output: _________
+def diaParaLetra(dia):
+    if dia == 0:
+        return "B"
+    if dia == 1:
+        return "C"
+    if dia == 2:
+        return "D"
+    if dia == 3:
+        return "E"
+    if dia == 4:
+        return "F"
+    if dia == 5:
+        return "G"
+    if dia == 6:
+        return "H"
+
+def horaParaNumero(hora):
+    delta = hora - 8
+    return str(int(delta/0.5) + 1)
+# _____________________________________________

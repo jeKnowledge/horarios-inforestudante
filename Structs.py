@@ -11,7 +11,7 @@ class AulaDataRaw:
         self.dataFim = dataFim
 
 class AulaDataSripped:
-    def __init__(self, aulaId, semestre, turmaId, dia, horaInicio, horaFim, turma, tipo):
+    def __init__(self, aulaId, semestre, turmaId, dia, horaInicio, horaFim, turma, tipo, aulaNome):
         self.aulaId = aulaId
         self.semestre = semestre
         self.turmaId = turmaId
@@ -20,6 +20,7 @@ class AulaDataSripped:
         self.horaFim = horaFim
         self.turma = turma
         self.tipo = tipo
+        self.aulaNome = aulaNome
 
     def sameAs(self, otherAulaDataStripped):
         result = True
@@ -31,7 +32,8 @@ class AulaDataSripped:
                 or self.horaInicio != s.horaInicio \
                 or self.horaFim != s.horaFim \
                 or self.turma != s.turma\
-                or self.tipo != s.tipo:
+                or self.tipo != s.tipo\
+                or self.aulaNome != s.aulaNome:
             result = False
         return result
     def dataStr(self):
