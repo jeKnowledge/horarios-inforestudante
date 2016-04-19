@@ -6,7 +6,7 @@ print("started")
 
 # Mock user data
 semester = 1
-classesId = [178771, 178867, 181136, 181692, 181695, 182399, 180876]
+classesId = [178880, 178754]
 
 # Parse csv into array of stripped data
 dataRawArray = DataParser.csvIntoRawArray(DataParser.openFile("HorariosRaw.csv"))
