@@ -99,8 +99,8 @@ def removeOverlaps(dictionary, validCombinations):
                 aulas = dictionary[turma[0]][turma[1]][turma[2]] # Tirar objetos Aula do dicionario (multiplos!)
 
                 for aula in aulas:
-                    # Criar tuple com horas inicio/fim e turma (disciplina/tipo/turma)
-                    ref = (aula.horaInicio, aula.horaFim, (turma[0], turma[1], turma[2]))
+                    # Criar tuple com horas inicio/fim, dia e turma (disciplina/tipo/turma)
+                    ref = (aula.horaInicio, aula.horaFim, aula.dia, (turma[0], turma[1], turma[2]))
                     turmas.append(ref)
 
         # Criar pares
@@ -110,17 +110,21 @@ def removeOverlaps(dictionary, validCombinations):
         # Retirar pares de mesmas aulas
         for par in todosPares:
             # Verificar se turmas diferentes
-            turmaA = par[0][2]
-            turmaB = par[1][2]
+            turmaA = par[0][3]
+            turmaB = par[1][3]
             if turmaA[0] != turmaB[0] or turmaA[1] != turmaB[1] or turmaA[2] != turmaB[2]:
                 pares.append(par)
 
         # Verificar sobreposicao em cada par
         combSemSobreposicoes = True
-        print(pares)
+
         for par in pares:
             a = par[0]
             b = par[1]
+
+            # Dias diferentes?
+            if a[2] != b[3]:
+                continue
 
             cedo = min(a[0], b[0])
             tarde = max(a[1], b[1])
