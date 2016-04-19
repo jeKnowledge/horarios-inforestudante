@@ -88,7 +88,7 @@ def possibleCombinations(dictionary):
 # Verifica se ha sobreposicao de aulas e se houver, remove-as
 # Devolve lista de combinacoes sem sobreposicoes
 def removeOverlaps(dictionary, validCombinations):
-    noOverlaps = []
+    noOverlaps = [] # Resultado a devolver
 
     for comb in validCombinations:
         turmas = [] # turmas com "coordenadas", sob a forma (horaInicio, horaFim, (aula, tipo, turma))
@@ -194,8 +194,9 @@ def outputExcel(dictionary, combinations):
             for coord in disciplina:
                 aulaObjList = dictionary[coord[0]][coord[1]][coord[2]]
                 for aulaObj in aulaObjList:
+                    # Tirar meia hora ao fim, para que nao haja merge sobreposto
                     cellRange = diaParaLetra(aulaObj.dia) + horaParaNumero(aulaObj.horaInicio) + ":"\
-                           + diaParaLetra(aulaObj.dia) + horaParaNumero(aulaObj.horaFim)
+                           + diaParaLetra(aulaObj.dia) + horaParaNumero(aulaObj.horaFim - 0.5)
 
                     ws.merge_cells(cellRange)
                     ws[diaParaLetra(aulaObj.dia) + horaParaNumero(aulaObj.horaInicio)] = aulaObj.aulaNome +\
