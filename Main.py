@@ -24,4 +24,7 @@ possibleCombinations = TimetableMaker.possibleCombinations(aulas)
 noOverlaps = TimetableMaker.removeOverlaps(aulas, possibleCombinations)
 
 # Output to Excel
-TimetableMaker.outputExcel(aulas, noOverlaps)
+wb = TimetableMaker.outputExcel(aulas, noOverlaps)
+
+# Output to html
+TimetableMaker.convertExcelToWeb(wb)

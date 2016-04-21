@@ -63,3 +63,4 @@ target/
 .idea/
 HorariosRaw.csv
 output.xlsx
+*.html

@@ -43,9 +43,11 @@ def possibleCombinations(dictionary):
                 if tipo not in tiposNaComb:
                     tiposNaComb.append(tipo)
 
-            #Se a combinacao possuir todos os tipos de aula e valida
-            if set(tiposNaComb) == set(tipos):
-                combTurmasValidas.append(comb)
+            #Se a combinacao nao possuir todos os tipos de aula nao e valida
+            if set(tiposNaComb) != set(tipos):
+                continue
+
+            combTurmasValidas.append(comb)
 
         aulas.append(aula)
 
@@ -62,8 +64,20 @@ def possibleCombinations(dictionary):
             if turmaComb[0][0] not in aulasInComb:
                 aulasInComb.append(turmaComb[0][0])    # comb[0] == (aula, tipo, turma); tuple[0] == aula
 
-        if set(aulasInComb) == set(aulas):
-            combAulasValidas.append(comb)   # Se esta combinacao de turmas possuir todas as aulas, e valida
+        # Se esta combinacao de turmas possuir nao todas as aulas, nao e valida
+        if set(aulasInComb) != set(aulas):
+            continue
+
+        # Verificar se a combinação nao existe ja sob outra ordem
+        existe = False
+        for combValida in combAulasValidas:
+            if set(combValida) == set(comb):
+                existe = True
+                break
+        if existe:
+            continue
+
+        combAulasValidas.append(comb)
 
     return combAulasValidas
 
@@ -123,7 +137,7 @@ def removeOverlaps(dictionary, validCombinations):
             b = par[1]
 
             # Dias diferentes?
-            if a[2] != b[3]:
+            if a[2] != b[2]:
                 continue
 
             cedo = min(a[0], b[0])
@@ -137,6 +151,7 @@ def removeOverlaps(dictionary, validCombinations):
 
         if combSemSobreposicoes:
             noOverlaps.append(comb)
+
 
     return noOverlaps
 
@@ -161,11 +176,11 @@ from random import randint
     # Combinacoes de aulas:
     # ( ( ((aula1, tipo1, turma1), (aula1, tipo2, turma1)), ((aula2, tipo1, turma1), (aula2, tipo2, turma1)) ), ... )
 # Grava um ficheiro xlsm (output.xlsm)
-# Devolve se a operacao foi bem sucedida
+# Devolve workbook do openpyxl
 def outputExcel(dictionary, combinations):
     if len(combinations) == 0:
         print("No combinations!")
-        return False
+        return
 
     wb = Workbook()
     wb.remove_sheet(wb.active) # Apagar folha default
@@ -199,6 +214,8 @@ def outputExcel(dictionary, combinations):
                            + diaParaLetra(aulaObj.dia) + horaParaNumero(aulaObj.horaFim - 0.5)
 
                     ws.merge_cells(cellRange)
+
+                    # Add label
                     ws[diaParaLetra(aulaObj.dia) + horaParaNumero(aulaObj.horaInicio)] = aulaObj.aulaNome +\
                         "," + aulaObj.turma
 
@@ -207,7 +224,7 @@ def outputExcel(dictionary, combinations):
 
     wb.save('output.xlsx')
 
-    return True
+    return wb
 
 
 # ______ Helper functions para output: _________
@@ -229,5 +246,48 @@ def diaParaLetra(dia):
 
 def horaParaNumero(hora):
     delta = hora - 8
-    return str(int(delta/0.5) + 1)
+    return str(int(delta/0.5) + 2)
 # _____________________________________________
+
+
+# XLSXtoHTMLdemo
+
+# Program to convert the data from an XLSX file to HTML.
+# Uses the openpyxl library.
+
+# Author: Vasudev Ram - http://www.dancingbison.com
+# Altered by Miguel Murça for the purposes of this program
+
+import openpyxl
+from openpyxl import load_workbook
+
+def convertExcelToWeb(workbook):
+    worksheets = workbook._sheets
+
+    for worksheet in worksheets:
+        html_data = """
+        <html>
+            <head>
+                <title>
+                Horario
+                </title>
+            <head>
+            <body>
+            <table>
+        """
+
+        ws_range = worksheet.iter_rows('A1:I30')
+        for row in ws_range:
+            html_data += "<tr>"
+            for cell in row:
+                if cell.value is None:
+                    html_data += "<td>" + ' ' + "<td>"
+                else:
+                    html_data += "<td>" + str(cell.value) + "<td>"
+            html_data += "<tr>"
+        html_data += "</table>\n</body>\n</html>"
+
+        with open(worksheet.title + ".html", "w") as html_fil:
+            html_fil.write(html_data)
+
+    # EOF
